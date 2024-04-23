@@ -149,9 +149,8 @@ async def invest_it(
     to_be_invested = min(to_be_invested, to_invest)
 
     for donation in donation_objs:
-        donation_to_be_invested = (
-                donation.full_amount - donation.invested_amount
-        )
+        donation_to_be_invested = \
+            (donation.full_amount - donation.invested_amount)
         if donation_to_be_invested <= to_be_invested:
             setattr(donation, "invested_amount", donation.full_amount)
             setattr(donation, "close_date", get_current_time())
