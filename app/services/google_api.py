@@ -5,11 +5,15 @@ from aiogoogle import Aiogoogle
 from app.core.config import settings
 
 FORMAT = "%Y/%m/%d %H:%M:%S"
+SPREADSHEETS_API_VERSION = "v4"
+DRIVE_API_VERSION = "v3"
 
 
 async def spreadsheets_create(wrapper_services: Aiogoogle) -> str:
     """Создание таблицы."""
-    service = await wrapper_services.discover("sheets", "v4")
+    service = await wrapper_services.discover(
+        "sheets",
+        SPREADSHEETS_API_VERSION)
     spreadsheet_body = {
         "properties": {"title": "Инвестирование", "locale": "ru_RU"},
         "sheets": [
@@ -39,7 +43,7 @@ async def set_user_permissions(
         "role": "writer",
         "emailAddress": settings.email,
     }
-    service = await wrapper_services.discover("drive", "v3")
+    service = await wrapper_services.discover("drive", DRIVE_API_VERSION)
     await wrapper_services.as_service_account(
         service.permissions.create(
             fileId=spreadsheet_id, json=permissions_body, fields="id"
@@ -54,7 +58,9 @@ async def spreadsheets_update_value(
 ) -> None:
     """Заполнение таблицы данными."""
     now_date_time = datetime.now().strftime(FORMAT)
-    service = await wrapper_services.discover("sheets", "v4")
+    service = await wrapper_services.discover(
+        "sheets",
+        SPREADSHEETS_API_VERSION)
     table_values = [
         ["Отчет", now_date_time],
         ["Топ проектов"],
@@ -68,7 +74,6 @@ async def spreadsheets_update_value(
             str(project[4]),
         ]
         table_values.append(new_row)
-    print(table_values)
 
     update_body = {"majorDimension": "ROWS", "values": table_values}
 
